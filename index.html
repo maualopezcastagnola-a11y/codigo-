@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Egresados Stevenson 2026 — Bariloche</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#08111e;color:#e4eaf4;min-height:100vh}
+:root{
+  --bg:#08111e;--bg2:#101d30;--bg3:#172642;--bg4:#1f3358;--bg5:#2a4470;
+  --text:#e4eaf4;--text2:#9fb3cc;--text3:#5a7494;
+  --orange:#ff5e1a;--orange2:#ff8040;--orange-pale:rgba(255,94,26,0.12);--orange-border:rgba(255,94,26,0.35);
+  --blue:#3d8eff;--blue-pale:rgba(61,142,255,0.12);
+  --green:#2ecf87;--green-pale:rgba(46,207,135,0.12);
+  --red:#ff3d3d;--red-pale:rgba(255,61,61,0.12);
+  --yellow:#ffc533;--yellow-pale:rgba(255,197,51,0.12);
+  --radius:12px;--radius-sm:8px;
+}
+.hero{position:relative;overflow:hidden;background:#0a1929}
+.hero svg{width:100%;display:block;height:160px}
+.hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:14px 18px 12px;background:linear-gradient(transparent,rgba(8,17,30,0.97) 60%)}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1.5px;color:#fff;line-height:1;display:flex;align-items:center;gap:10px}
+.hero-sub{font-size:11px;color:#5a7494;margin-top:3px;letter-spacing:0.5px}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-orange{background:var(--orange-pale);color:var(--orange2);border:1px solid var(--orange-border)}
+.badge-green{background:var(--green-pale);color:var(--green)}
+.badge-red{background:var(--red-pale);color:var(--red)}
+.badge-yellow{background:var(--yellow-pale);color:var(--yellow)}
+.nav{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--bg5);background:var(--bg2);scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{padding:11px 13px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;font-size:11px;font-weight:700;white-space:nowrap;transition:all .2s;text-transform:uppercase;letter-spacing:0.5px}
+.nav-btn:hover{color:var(--text2)}
+.nav-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
+.section{display:none;padding:16px;max-width:860px;margin:0 auto}
+.section.active{display:block}
+.card{background:var(--bg2);border:1px solid var(--bg5);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;text-transform:uppercase;letter-spacing:0.6px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;margin-bottom:12px}
+.metric{background:var(--bg3);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--bg5);border-top:2px solid var(--orange)}
+.metric-label{font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.7px;font-weight:700}
+.metric-val{font-size:19px;font-weight:700;color:var(--text)}
+.metric-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.prog-wrap{margin:8px 0}
+.prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px;font-weight:600}
+.prog-bar{height:5px;background:var(--bg5);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--orange);border-radius:3px;transition:width .6s}
+.prog-fill.green{background:var(--green)}
+.filter-row{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.filter-btn{padding:5px 11px;background:var(--bg3);border:1px solid var(--bg5);border-radius:20px;color:var(--text3);font-size:11px;cursor:pointer;font-weight:600}
+.filter-btn.active{border-color:var(--orange-border);color:var(--orange);background:var(--orange-pale)}
+.clause{background:var(--bg3);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:7px;border-left:3px solid var(--bg5)}
+.clause.danger{border-left-color:var(--red)}.clause.warn{border-left-color:var(--yellow)}.clause.ok{border-left-color:var(--green)}
+.clause-head{display:flex;align-items:flex-start;gap:9px}
+.clause-icon{font-size:14px;flex-shrink:0;margin-top:2px}
+.clause-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.clause-text{font-size:12px;color:var(--text2);line-height:1.5}
+.clause-detail{font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5;display:none;border-top:1px solid var(--bg5);padding-top:7px}
+.expand-btn{font-size:11px;color:var(--orange);cursor:pointer;background:none;border:none;padding:0;margin-top:4px;display:block;font-weight:600}
+.day-block{background:var(--bg3);border:1px solid var(--bg5);border-radius:var(--radius-sm);margin-bottom:7px;overflow:hidden}
+.day-head{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;cursor:pointer;user-select:none}
+.day-head:hover{background:var(--bg4)}
+.day-num{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;font-weight:700}
+.day-title{font-size:13px;font-weight:600;color:var(--text)}
+.day-meta{display:flex;align-items:center;gap:7px}
+.day-body{padding:10px 13px;display:none;border-top:1px solid var(--bg5)}
+.day-body.open{display:block}
+.act-row{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.act-row:last-child{border-bottom:none}
+.chk{width:17px;height:17px;border:1.5px solid var(--bg5);border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:2px;font-size:11px;transition:all .15s}
+.chk.done{background:var(--green);border-color:var(--green);color:#fff}
+.act-name{font-size:13px;color:var(--text)}
+.act-name.done{text-decoration:line-through;color:var(--text3)}
+.act-time{font-size:11px;color:var(--text3);margin-top:2px}
+.act-tag{display:inline-block;font-size:10px;padding:2px 6px;border-radius:10px;margin-left:5px;font-weight:600}
+/* KIT */
+.kit-hero-bar{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg3);border:1px solid var(--bg5);border-radius:var(--radius-sm);margin-bottom:12px}
+.kit-pct-big{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--orange);line-height:1;flex-shrink:0}
+.kit-tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.kit-tab{padding:5px 12px;background:var(--bg3);border:1px solid var(--bg5);border-radius:20px;color:var(--text3);font-size:11px;cursor:pointer;font-weight:600;transition:all .15s}
+.kit-tab.active{background:var(--orange-pale);border-color:var(--orange-border);color:var(--orange)}
+.kit-important{background:var(--red-pale);border:1px solid rgba(255,61,61,0.3);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:10px}
+.kit-important-title{font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px}
+.kit-imp-row{font-size:12px;color:var(--text2);padding:3px 0;display:flex;gap:6px;line-height:1.4}
+.kit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.kit-item{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--bg4);border-radius:var(--radius-sm);border:1px solid transparent;cursor:pointer;transition:all .15s;user-select:none}
+.kit-item:hover{border-color:var(--bg5)}
+.kit-item.done{background:rgba(46,207,135,0.07);border-color:rgba(46,207,135,0.2)}
+.kit-item.req-alert{border-color:rgba(255,94,26,0.3)}
+.kit-chk{width:17px;height:17px;border:1.5px solid var(--bg5);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;margin-top:1px}
+.kit-item.done .kit-chk{background:var(--green);border-color:var(--green);color:#fff}
+.kit-item-text{flex:1;font-size:12px;color:var(--text);line-height:1.4}
+.kit-item.done .kit-item-text{text-decoration:line-through;color:var(--text3)}
+.kit-count{display:inline-block;background:var(--bg5);color:var(--orange);font-weight:700;font-size:11px;padding:0 5px;border-radius:3px;margin-right:4px}
+.kit-req-badge{font-size:9px;background:var(--orange-pale);color:var(--orange);border:1px solid var(--orange-border);border-radius:3px;padding:0 4px;margin-left:4px;font-weight:700;text-transform:uppercase;vertical-align:middle}
+.alert-item{display:flex;gap:10px;padding:11px 13px;border-radius:var(--radius-sm);margin-bottom:7px;border:1px solid transparent}
+.alert-urgent{background:var(--red-pale);border-color:rgba(255,61,61,0.3)}
+.alert-warn{background:var(--yellow-pale);border-color:rgba(255,197,51,0.3)}
+.alert-info{background:var(--blue-pale);border-color:rgba(61,142,255,0.2)}
+.alert-icon{font-size:16px;flex-shrink:0}
+.alert-title{font-size:13px;font-weight:700;margin-bottom:2px}
+.alert-urgent .alert-title{color:var(--red)}.alert-warn .alert-title{color:var(--yellow)}.alert-info .alert-title{color:var(--blue)}
+.alert-text{font-size:12px;color:var(--text2);line-height:1.5}
+.msg-list{max-height:280px;overflow-y:auto;margin-bottom:11px;display:flex;flex-direction:column;gap:7px}
+.msg{padding:8px 11px;border-radius:var(--radius-sm);max-width:82%;font-size:13px;line-height:1.5}
+.msg.mine{background:var(--orange-pale);border:1px solid var(--orange-border);margin-left:auto;color:var(--text)}
+.msg.other{background:var(--bg3);border:1px solid var(--bg5);color:var(--text)}
+.msg-sender{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:3px}
+.msg-time{font-size:10px;color:var(--text3);margin-top:2px;text-align:right}
+.msg-input-row{display:flex;gap:7px}
+.msg-input-row input{flex:1;padding:8px 11px;background:var(--bg3);border:1px solid var(--bg5);border-radius:var(--radius-sm);font-size:13px;color:var(--text);outline:none}
+.msg-input-row input:focus{border-color:var(--orange)}
+.msg-input-row button{padding:8px 15px;background:var(--orange);color:#fff;border:none;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:700}
+.photo-tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.photo-tab{padding:5px 11px;background:var(--bg3);border:1px solid var(--bg5);border-radius:20px;color:var(--text3);font-size:11px;cursor:pointer;font-weight:600}
+.photo-tab.active{background:var(--orange-pale);border-color:var(--orange-border);color:var(--orange)}
+.upload-zone{border:2px dashed var(--bg5);border-radius:var(--radius);padding:1.6rem;text-align:center;cursor:pointer;margin-bottom:12px;transition:all .2s}
+.upload-zone:hover{border-color:var(--orange);background:var(--orange-pale)}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.photo-item{aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;position:relative}
+.photo-item img{width:100%;height:100%;object-fit:cover}
+.photo-caption{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.65);font-size:10px;color:#fff;padding:3px 6px}
+.photo-empty{aspect-ratio:1;border:1px dashed var(--bg5);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;color:var(--text3);gap:4px;cursor:pointer}
+.photo-empty:hover{background:var(--bg3)}
+.ai-query-btns{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px}
+.ai-query-btn{padding:5px 11px;background:var(--bg3);border:1px solid var(--bg5);border-radius:20px;color:var(--text3);font-size:11px;cursor:pointer;font-weight:600}
+.ai-query-btn:hover{border-color:var(--orange-border);color:var(--orange)}
+.ai-input-row{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap}
+.ai-input-row input{flex:1;min-width:180px;padding:8px 11px;background:var(--bg3);border:1px solid var(--bg5);border-radius:var(--radius-sm);font-size:13px;color:var(--text);outline:none}
+.ai-input-row input:focus{border-color:var(--orange)}
+.ai-input-row button{padding:8px 16px;background:var(--orange);color:#fff;border:none;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:700}
+.ai-output{background:var(--bg3);border:1px solid var(--bg5);border-radius:var(--radius-sm);padding:13px;font-size:13px;color:var(--text2);line-height:1.7;min-height:50px}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:blink 1.2s infinite;display:inline-block;margin-right:3px}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.field{margin-bottom:9px}
+.field label{display:block;font-size:10px;color:var(--text3);margin-bottom:3px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.field input,.field select{width:100%;padding:8px 10px;background:var(--bg3);border:1px solid var(--bg5);border-radius:var(--radius-sm);font-size:13px;color:var(--text);outline:none}
+.field input:focus,.field select:focus{border-color:var(--orange)}
+.btn{padding:7px 13px;border:1px solid var(--bg5);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:12px;font-weight:600}
+.btn:hover{background:var(--bg4)}.btn-orange{background:var(--orange);color:#fff;border-color:var(--orange)}.btn-sm{padding:5px 10px;font-size:11px}
+.doc-item{display:flex;align-items:center;gap:9px;padding:8px 11px;background:var(--bg3);border:1px solid var(--bg5);border-radius:var(--radius-sm);margin-bottom:5px}
+.doc-icon{font-size:17px;flex-shrink:0}.doc-name{flex:1;font-size:13px;color:var(--text);font-weight:500}.doc-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.info-table{width:100%;font-size:13px;border-collapse:collapse}
+.info-table td{padding:7px 0;border-bottom:1px solid var(--bg5)}
+.info-table td:first-child{color:var(--text3);width:42%}.info-table td:last-child{color:var(--text);font-weight:600;text-align:right}
+.info-table tr:last-child td{border-bottom:none}
+.weather-strip{display:flex;gap:5px;overflow-x:auto;margin-bottom:11px;padding-bottom:4px;scrollbar-width:none}
+.weather-strip::-webkit-scrollbar{display:none}
+.weather-day{flex-shrink:0;background:var(--bg3);border:1px solid var(--bg5);border-radius:var(--radius-sm);padding:7px 10px;text-align:center;min-width:65px}
+.wd-day{font-size:9px;color:var(--text3);margin-bottom:3px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.wd-icon{font-size:17px;margin-bottom:3px}.wd-temp{font-size:11px;font-weight:700;color:var(--text)}.wd-desc{font-size:9px;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<svg viewBox="0 0 800 160" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#040d18"/><stop offset="100%" stop-color="#0e1f35"/></linearGradient>
+</defs>
+<rect width="800" height="160" fill="url(#sk)"/>
+<!-- stars -->
+<circle cx="45" cy="14" r="1" fill="#fff" opacity=".55"/><circle cx="120" cy="8" r="1.3" fill="#fff" opacity=".7"/><circle cx="200" cy="18" r=".8" fill="#fff" opacity=".5"/><circle cx="310" cy="10" r="1.1" fill="#fff" opacity=".65"/><circle cx="420" cy="6" r="1.2" fill="#fff" opacity=".6"/><circle cx="540" cy="16" r=".9" fill="#fff" opacity=".55"/><circle cx="650" cy="9" r="1" fill="#fff" opacity=".7"/><circle cx="760" cy="20" r=".8" fill="#fff" opacity=".5"/><circle cx="85" cy="30" r=".7" fill="#fff" opacity=".4"/><circle cx="490" cy="26" r=".8" fill="#fff" opacity=".4"/><circle cx="700" cy="30" r=".7" fill="#fff" opacity=".45"/>
+<!-- far range -->
+<polygon points="0,160 0,105 50,85 110,70 175,80 240,55 310,70 380,48 450,65 520,42 590,60 660,45 730,58 800,50 800,160" fill="#0c1e32"/>
+<!-- snow far -->
+<polygon points="240,55 226,72 255,70" fill="#b8cfe0" opacity=".55"/>
+<polygon points="380,48 363,70 398,66" fill="#b8cfe0" opacity=".6"/>
+<polygon points="520,42 503,65 538,60" fill="#b8cfe0" opacity=".55"/>
+<polygon points="660,45 642,65 678,60" fill="#b8cfe0" opacity=".5"/>
+<!-- mid range -->
+<polygon points="0,160 0,118 70,100 150,110 220,92 300,105 375,85 455,100 530,78 610,95 690,80 770,92 800,88 800,160" fill="#102035"/>
+<!-- snow mid -->
+<polygon points="220,92 205,108 236,105" fill="#c5d8e8" opacity=".5"/>
+<polygon points="375,85 358,103 393,100" fill="#c5d8e8" opacity=".5"/>
+<polygon points="530,78 513,97 549,94" fill="#c5d8e8" opacity=".55"/>
+<polygon points="690,80 672,98 709,94" fill="#c5d8e8" opacity=".5"/>
+<!-- foreground -->
+<polygon points="0,160 0,128 90,112 190,122 270,105 360,116 440,100 530,112 620,98 720,108 800,100 800,160" fill="#142138"/>
+<!-- pines left -->
+<polygon points="15,160 15,128 20,116 25,128 25,160" fill="#0a1525"/><polygon points="32,160 32,132 38,118 44,132 44,160" fill="#0a1525"/><polygon points="52,160 52,130 59,115 66,130 66,160" fill="#0a1525"/>
+<!-- pines right -->
+<polygon points="735,160 735,128 741,114 747,128 747,160" fill="#0a1525"/><polygon points="755,160 755,130 762,116 769,130 769,160" fill="#0a1525"/><polygon points="778,160 778,128 785,114 792,128 792,160" fill="#0a1525"/>
+<!-- lake -->
+<rect x="0" y="145" width="800" height="15" fill="#0c1c2e" opacity=".8"/>
+<!-- moon -->
+<circle cx="680" cy="25" r="12" fill="#1a3050"/><circle cx="686" cy="20" r="12" fill="#040d18"/>
+<!-- orange glow horizon -->
+<ellipse cx="400" cy="155" rx="280" ry="18" fill="#ff5e1a" opacity=".06"/>
+</svg>
+<div class="hero-overlay">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div>
+      <div class="hero-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polygon points="12,2 2,22 22,22" fill="none" stroke="#ff5e1a" stroke-width="1.8"/><polygon points="12,5 4,19 20,19" fill="#ff5e1a" opacity=".1"/></svg>
+        EGRESADOS STEVENSON 2026
+      </div>
+      <div class="hero-sub">San Carlos de Bariloche &nbsp;·&nbsp; Julio &nbsp;·&nbsp; Travel Rock &nbsp;·&nbsp; Reserva #621016</div>
+    </div>
+    <span class="badge badge-orange" id="countdown-badge">Cargando...</span>
+  </div>
+</div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showSection('resumen',this)">Resumen</button>
+  <button class="nav-btn" onclick="showSection('kit',this)">🎒 Kit de Viaje</button>
+  <button class="nav-btn" onclick="showSection('contrato',this)">Contrato</button>
+  <button class="nav-btn" onclick="showSection('actividades',this)">Actividades</button>
+  <button class="nav-btn" onclick="showSection('alertas',this)">Alertas <span class="badge badge-red" style="padding:2px 6px;font-size:10px;margin-left:2px" id="alert-count">3</span></button>
+  <button class="nav-btn" onclick="showSection('padres',this)">Padres</button>
+  <button class="nav-btn" onclick="showSection('fotos',this)">Fotos</button>
+  <button class="nav-btn" onclick="showSection('ia',this)">IA Contrato</button>
+</nav>
+
+<!-- RESUMEN -->
+<section id="s-resumen" class="section active">
+  <div class="grid4">
+    <div class="metric"><div class="metric-label">Pasajeros</div><div class="metric-val">~30</div><div class="metric-sub">Colegio Stevenson</div></div>
+    <div class="metric"><div class="metric-label">Total / pax</div><div class="metric-val">$1.890.000</div><div class="metric-sub">Tope inflación</div></div>
+    <div class="metric"><div class="metric-label">Duración</div><div class="metric-val">9 días</div><div class="metric-sub">8 noches</div></div>
+    <div class="metric"><div class="metric-label">Salida</div><div class="metric-val">Julio</div><div class="metric-sub">Quincena vacaciones</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🏠 Alojamiento confirmado</div>
+    <table class="info-table">
+      <tr><td>Hotel prioridad 1</td><td>Hotel Ausonia — J.M. de Rosas 464</td></tr>
+      <tr><td>Prioridad 2</td><td>Bariloche City — Av. San Martín 485</td></tr>
+      <tr><td>Régimen</td><td>Pensión completa + 5ª comida</td></tr>
+      <tr><td>Habitaciones</td><td>Triples y cuádruples</td></tr>
+      <tr><td>Exclusividad</td><td>Solo pasajeros Travel Rock</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">💳 Plan de pagos</div>
+    <div class="prog-wrap">
+      <div class="prog-label"><span>Cuotas abonadas</span><span id="pagos-label">Calculando...</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="pagos-barra" style="width:0%"></div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:7px">Escalonadas tope IPC — $50.000 → $180.000 (julio). Inicio $140.000.</div>
+    <div style="background:var(--red-pale);border:1px solid rgba(255,61,61,0.3);border-radius:var(--radius-sm);padding:9px 11px;margin-top:9px;font-size:12px;color:var(--red);line-height:1.5">
+      ⚠️ <strong>El plan cae a la 2ª cuota atrasada.</strong> Configurá débito automático.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">❄️ Clima histórico — Julio Bariloche</div>
+    <div class="weather-strip">
+      <div class="weather-day"><div class="wd-day">Día 1</div><div class="wd-icon">❄️</div><div class="wd-temp">-2°/5°</div><div class="wd-desc">Llegada</div></div>
+      <div class="weather-day"><div class="wd-day">Día 2</div><div class="wd-icon">🌨️</div><div class="wd-temp">-5°/3°</div><div class="wd-desc">Ski ★</div></div>
+      <div class="weather-day"><div class="wd-day">Día 3</div><div class="wd-icon">🌤️</div><div class="wd-temp">-3°/7°</div><div class="wd-desc">Culipatín</div></div>
+      <div class="weather-day"><div class="wd-day">Día 4</div><div class="wd-icon">⛅</div><div class="wd-temp">-1°/8°</div><div class="wd-desc">Campo</div></div>
+      <div class="weather-day"><div class="wd-day">Día 5</div><div class="wd-icon">🌤️</div><div class="wd-temp">0°/9°</div><div class="wd-desc">City Tour</div></div>
+      <div class="weather-day"><div class="wd-day">Día 6</div><div class="wd-icon">❄️</div><div class="wd-temp">-4°/5°</div><div class="wd-desc">Cuatricic.</div></div>
+      <div class="weather-day"><div class="wd-day">Día 7</div><div class="wd-icon">🌨️</div><div class="wd-temp">-3°/6°</div><div class="wd-desc">Full Day</div></div>
+      <div class="weather-day"><div class="wd-day">Día 8</div><div class="wd-icon">⛅</div><div class="wd-temp">-2°/7°</div><div class="wd-desc">Despedida</div></div>
+      <div class="weather-day"><div class="wd-day">Día 9</div><div class="wd-icon">🌤️</div><div class="wd-temp">2°/10°</div><div class="wd-desc">Regreso</div></div>
+    </div>
+    <div style="font-size:10px;color:var(--text3)">★ Datos históricos. Confirmá pronóstico real 7 días antes.</div>
+  </div>
+</section>
+
+<!-- KIT DE VIAJE -->
+<section id="s-kit" class="section">
+  <div class="kit-hero-bar">
+    <div class="kit-pct-big" id="kit-pct">0%</div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">Checklist de equipaje</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:5px" id="kit-label">Tildá lo que ya tenés listo</div>
+      <div class="prog-bar"><div class="prog-fill green" id="kit-bar" style="width:0%"></div></div>
+    </div>
+    <button class="btn btn-sm" onclick="resetKit()">🔄</button>
+  </div>
+  <div class="kit-important">
+    <div class="kit-important-title">🔴 Obligatorio — no puede faltar</div>
+    <div class="kit-imp-row">👟 <span>Zapatillas auxiliares para actividades con barro <strong>(obligatorio)</strong></span></div>
+    <div class="kit-imp-row">🧤 <span>Guantes térmicos <strong>(obligatorio)</strong></span></div>
+    <div class="kit-imp-row">📋 <span>Ficha médica impresa, firmada y sellada por médico — también del acompañante</span></div>
+    <div class="kit-imp-row">🪪 <span>DNI vigente o pasaporte actualizado</span></div>
+  </div>
+  <div class="kit-tabs">
+    <button class="kit-tab active" onclick="filterKit('all',this)">Todo</button>
+    <button class="kit-tab" onclick="filterKit('diaria',this)">👕 Ropa diaria</button>
+    <button class="kit-tab" onclick="filterKit('especial',this)">🎭 Ropa especial</button>
+    <button class="kit-tab" onclick="filterKit('accesorios',this)">🧤 Accesorios</button>
+    <button class="kit-tab" onclick="filterKit('docs',this)">📋 Documentos</button>
+  </div>
+  <div id="kit-list"></div>
+  <div style="font-size:11px;color:var(--text3);text-align:center;padding:8px 0">
+    ✅ Campera térmica, pantalón de montaña y botas WaterProof están incluidas en el Bonus Service de Travel Rock.
+  </div>
+</section>
+
+<!-- CONTRATO -->
+<section id="s-contrato" class="section">
+  <div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5">Análisis de las cláusulas del contrato firmado. Identificamos los riesgos para que no haya sorpresas.</div>
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="filterClauses('all',this)">Todas (12)</button>
+    <button class="filter-btn" onclick="filterClauses('danger',this)">🔴 Críticas (3)</button>
+    <button class="filter-btn" onclick="filterClauses('warn',this)">🟡 Atención (4)</button>
+    <button class="filter-btn" onclick="filterClauses('ok',this)">🟢 Sólidas (5)</button>
+  </div>
+  <div id="clauses-list"></div>
+</section>
+
+<!-- ACTIVIDADES -->
+<section id="s-actividades" class="section">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:7px">
+    <div style="font-size:12px;color:var(--text3)">24 actividades · 9 días</div>
+    <button class="btn btn-sm" onclick="resetChecks()">🔄 Reiniciar</button>
+  </div>
+  <div id="days-list"></div>
+</section>
+
+<!-- ALERTAS -->
+<section id="s-alertas" class="section">
+  <div id="alerts-list"></div>
+  <div class="card" style="margin-top:8px">
+    <div class="card-title">➕ Agregar recordatorio</div>
+    <div class="field"><label>Descripción</label><input type="text" id="new-alert-text" placeholder="Ej: Confirmar talles campera"></div>
+    <div class="field"><label>Tipo</label><select id="new-alert-type"><option value="info">ℹ️ Información</option><option value="warn">⚠️ Atención</option><option value="urgent">🔴 Urgente</option></select></div>
+    <button class="btn btn-orange btn-sm" onclick="addAlert()">Agregar</button>
+  </div>
+</section>
+
+<!-- PADRES -->
+<section id="s-padres" class="section">
+  <div class="card">
+    <div class="card-title">💬 Grupo de padres — Stevenson 2026 <span class="badge badge-green">12 activos</span></div>
+    <div class="msg-list" id="msg-list"></div>
+    <div class="msg-input-row">
+      <input type="text" id="msg-input" placeholder="Escribí tu mensaje..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📎 Documentos</div>
+    <div class="doc-item"><div class="doc-icon">📄</div><div><div class="doc-name">Contrato Básico Avión Plan Travel</div><div class="doc-sub">Firmado · #621016 · 30/05/24</div></div><span class="badge badge-green">Firmado</span></div>
+    <div class="doc-item"><div class="doc-icon">📄</div><div><div class="doc-name">Complementario Plan Travel 2026</div><div class="doc-sub">Firmado · $1.890.000</div></div><span class="badge badge-green">Firmado</span></div>
+    <div class="doc-item"><div class="doc-icon">📋</div><div><div class="doc-name">Ficha Médica</div><div class="doc-sub">Debe entregarse antes del viaje</div></div><span class="badge badge-yellow">Pendiente</span></div>
+    <div class="doc-item"><div class="doc-icon">📋</div><div><div class="doc-name">Ficha alimentaria</div><div class="doc-sub">Alergias, celíacos, dietas</div></div><span class="badge badge-yellow">Pendiente</span></div>
+    <div style="margin-top:11px"><label style="display:block;font-size:10px;color:var(--text3);margin-bottom:5px;font-weight:700;text-transform:uppercase">Subir documento</label><input type="file" id="doc-upload" accept=".pdf,.jpg,.png" style="font-size:12px;color:var(--text2)"></div>
+  </div>
+</section>
+
+<!-- FOTOS -->
+<section id="s-fotos" class="section">
+  <div class="photo-tabs">
+    <button class="photo-tab active" onclick="switchPhotoTab('todas',this)">Todas</button>
+    <button class="photo-tab" onclick="switchPhotoTab('excursiones',this)">Excursiones</button>
+    <button class="photo-tab" onclick="switchPhotoTab('hotel',this)">Hotel</button>
+    <button class="photo-tab" onclick="switchPhotoTab('eventos',this)">Eventos</button>
+    <button class="photo-tab" onclick="switchPhotoTab('ski',this)">Ski</button>
+  </div>
+  <div class="upload-zone" onclick="document.getElementById('photo-input').click()">
+    <div style="font-size:24px;margin-bottom:6px">📷</div>
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">Subir fotos del viaje</div>
+    <div style="font-size:11px;color:var(--text3)">JPG, PNG — click para seleccionar</div>
+    <input type="file" id="photo-input" accept="image/*" multiple style="display:none" onchange="handlePhotos(event)">
+  </div>
+  <div class="photo-grid" id="photo-grid">
+    <div class="photo-empty" onclick="document.getElementById('photo-input').click()"><span style="font-size:20px">+</span><span>Agregar</span></div>
+    <div class="photo-empty" onclick="document.getElementById('photo-input').click()"><span style="font-size:20px">+</span><span>Agregar</span></div>
+    <div class="photo-empty" onclick="document.getElementById('photo-input').click()"><span style="font-size:20px">+</span><span>Agregar</span></div>
+  </div>
+</section>
+
+<!-- IA -->
+<section id="s-ia" class="section">
+  <div class="card">
+    <div class="card-title">🤖 Consultá el contrato con IA</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Preguntas sobre cláusulas usando los datos reales del contrato Stevenson #621016.</div>
+    <div class="ai-query-btns">
+      <button class="ai-query-btn" onclick="setQ('¿Cuáles son las cláusulas de cancelación y qué penalidades exactas aplican?')">Cancelación</button>
+      <button class="ai-query-btn" onclick="setQ('¿Qué cubre el seguro médico si hay fractura en la nieve?')">Seguro</button>
+      <button class="ai-query-btn" onclick="setQ('¿Cómo funciona el plan de cuotas tope inflación y qué pasa si me atraso?')">Pagos</button>
+      <button class="ai-query-btn" onclick="setQ('¿Qué pasa si una excursión no se puede hacer por clima?')">Excursiones</button>
+      <button class="ai-query-btn" onclick="setQ('¿Cuándo se entrega el monopatín y qué condiciones aplican?')">Monopatín</button>
+      <button class="ai-query-btn" onclick="setQ('¿Cómo funciona el sistema de liberados y bonificados?')">Liberados</button>
+    </div>
+    <div class="ai-input-row">
+      <input type="text" id="ai-input" placeholder="Ej: ¿El vuelo puede cambiar de fecha?">
+      <button onclick="askAI()">Consultar ↗</button>
+    </div>
+    <div class="ai-output" id="ai-output"><span style="color:var(--text3)">Elegí una pregunta o escribí la tuya.</span></div>
+  </div>
+</section>
+
+<script>
+const CONTRACT=`CONTRATO TRAVEL ROCK — STEVENSON — RESERVA 621016 — BARILOCHE JULIO 2026
+PRECIO TOTAL: $1.890.000/pax (básico $600.000 + complementario $1.290.000). Inicio $140.000.
+PAGOS: Plan escalonado 23 cuotas $50.000→$180.000 tope IPC, o iguales $82.174, o contado 10 cuotas $1.390.000 / 3 cuotas $1.110.000.
+CAÍDA: 2ª cuota atrasada (consecutiva o alternada).
+CANCELACIÓN: 60 días: 35%. 30 días: 60%. <30 días o quincena: 65%.
+HOTEL: Ausonia (prioridad 1), Bariloche City (alternativa). Exclusivo TR. Pensión completa + 5ª comida. WiFi fibra. Consultorio 24hs.
+VUELOS: ROS-BRC/BRC-ROS. Aerolíneas AR/Andes/Jetsmart/Flybondi. Cambios respetan naturaleza del servicio.
+EXCURSIONES (24): Ski/Snowboard, Culipatín, Snow Day, Paintball, Cuatriciclos, Explore BRC, Chocolates, Circuito Patagónico, Full Day Camp, Full Day TR, Full Colour Fest, Ice BRC, Bienvenida, Despedida Chall-Huaco, Ski Ranch, Noche de Gala, discos By Pass/Cerebro/Genux/Rocket/Grisú + 3 repeticiones. Cambio por igual/mayor valor con aceptación contingente.
+SEGURO: Assist Card 100%. Cirugías, internación, traslado aéreo, cobertura post-viaje. Fast Pass Sanatorio San Carlos. Avión sanitario ALS.
+COORDINADORES: +21 años, antecedentes penales, RCP Cruz Roja, toxicológico. +100 personas destino 24hs.
+LIBERADOS: 1 cada 18 pagos (120 días antes). 1 bonificado cada 24 pagos.
+BONUS: Kit invierno (campera térmica impermeable, pantalón montaña, botas WP), kit excursión, kit seguridad.
+MONOPATÍN: 1/pasajero viajante, stock 5.000, cancelable sin compensación.
+OBS STEVENSON: Ausonia prioridad 1 / Bariloche City. Fecha a coordinar con Dr. Paul Haggis.`;
+
+const CLAUSES=[
+  {level:'danger',icon:'🔴',badge:'Crítica',title:'Caída automática del plan de pagos',text:'2ª cuota atrasada (consecutiva o alternada) = plan caído automáticamente. Sin aviso previo, sin recuperación.',detail:'Configurá débito automático o recordatorio fijo el 1° de cada mes. Con ajuste IPC, el monto puede crecer — monitoreá activamente.'},
+  {level:'danger',icon:'🔴',badge:'Crítica',title:'Penalidades de cancelación muy altas',text:'Menos de 30 días: 65% de lo abonado. Con $1.890.000, podés perder más de $1.200.000.',detail:'Si existe riesgo de que el alumno no viaje, evaluá si algún seguro externo cubre cancelación. No está incluido en el paquete.'},
+  {level:'danger',icon:'🔴',badge:'Crítica',title:'Monopatín: puede no entregarse',text:'Stock de 5.000 unidades. Travel Rock puede cancelarlo en cualquier momento sin reemplazarlo ni compensarlo.',detail:'No es garantía contractual firme. No lo uses como argumento de valor real del paquete con otros padres.'},
+  {level:'warn',icon:'🟡',badge:'Atención',title:'Ruta aérea puede cambiar',text:'ROS–BRC confirmada pero reprogramable por fuerza mayor. "Naturaleza del servicio" es criterio amplio.',detail:'No garantiza aerolínea, horario ni fecha exacta. Un cambio de quincena puede impactar en trabajo y colegio.'},
+  {level:'warn',icon:'🟡',badge:'Atención',title:'Excursiones sujetas a cambios',text:'Por clima u operativa, cualquier actividad puede modificarse. El reemplazo requiere aceptación del contingente.',detail:'¿Quién decide si el reemplazo es equivalente? En grupos numerosos puede generar conflictos. Preguntá a Travel Rock qué usan como reemplazo habitual.'},
+  {level:'warn',icon:'🟡',badge:'Atención',title:'Cláusula de confidencialidad',text:'Condiciones confidenciales entre suscriptores y Travel Rock. No se puede difundir a terceros ni redes.',detail:'No publiques cláusulas en grupos abiertos. Compartir entre padres firmantes en reuniones cerradas debería estar permitido.'},
+  {level:'warn',icon:'🟡',badge:'Atención',title:'Liberados: plazo de 120 días estricto',text:'1 liberado cada 18 pagos, calculado 120 días antes del viaje (aprox. marzo 2026).',detail:'Si un alumno se baja y quedás en 17 pagos antes del plazo, perdés el liberado sin excepciones.'},
+  {level:'ok',icon:'🟢',badge:'Sólida',title:'Seguro médico integral al 100%',text:'Assist Card cubre todo: cirugías, internación, farmacia, traslado aéreo, cobertura post-viaje hasta alta definitiva.',detail:'Fast Pass en Sanatorio San Carlos. Avión sanitario ALS. Ambulancias en excursiones y discotecas. Sin costos ocultos.'},
+  {level:'ok',icon:'🟢',badge:'Sólida',title:'Hoteles en exclusividad',text:'Solo pasajeros Travel Rock. Sin mezcla con otras agencias. Rooming list propio — habitaciones no se comparten.',detail:'Ausonia (1ª prioridad) y Bariloche City. Pensión completa, WiFi fibra, consultorio 24hs, acceso por pulsera magnética.'},
+  {level:'ok',icon:'🟢',badge:'Sólida',title:'5 comidas diarias + gaseosas ilimitadas',text:'Desayuno, almuerzo, merienda, cena y servicio de madrugada. Coca-Cola/Pepsi ilimitadas en todas las comidas.',detail:'Dietas especiales para celíacos, diabéticos y vegetarianos — declarar en ficha alimentaria previa al viaje.'},
+  {level:'ok',icon:'🟢',badge:'Sólida',title:'Seguridad EFESUR + 100 personas 24hs',text:'Pulsera magnética individual, control de accesos, +100 personas en destino. Central de monitoreo exclusiva.',detail:'Coordinadores con toxicológico, RCP Cruz Roja, formados por SACV. Departamento para padres con info en tiempo real.'},
+  {level:'ok',icon:'🟢',badge:'Sólida',title:'Kit de nieve y equipamiento incluido',text:'Campera térmica e impermeable, pantalón de montaña, botas WaterProof. Kits de excursión y seguridad.',detail:'Sin costo adicional en destino. Kit Graduados: convenios con salones de fiesta Metropolitano en Rosario.'},
+];
+
+const KIT_ITEMS=[
+  {cat:'diaria',icon:'👟',count:'3',name:'Calzados (zapatillas/botas)',req:true},
+  {cat:'diaria',icon:'🧥',count:'2',name:'Buzos'},
+  {cat:'diaria',icon:'👕',count:'2',name:'Remeras térmicas'},
+  {cat:'diaria',icon:'👖',count:'1',name:'Pantalón deportivo'},
+  {cat:'diaria',icon:'👕',count:'4',name:'Remeras manga larga/corta'},
+  {cat:'diaria',icon:'🧦',count:'12',name:'Pares de medias'},
+  {cat:'diaria',icon:'🩲',count:'',name:'Ropa interior'},
+  {cat:'diaria',icon:'👖',count:'3',name:'Jeans'},
+  {cat:'diaria',icon:'🩳',count:'1',name:'Pantalón corto'},
+  {cat:'accesorios',icon:'🧢',count:'1',name:'Gorro térmico'},
+  {cat:'accesorios',icon:'🧤',count:'1',name:'Par de guantes termoimpermeables',req:true},
+  {cat:'accesorios',icon:'🕶️',count:'',name:'Lentes de sol'},
+  {cat:'accesorios',icon:'🧴',count:'',name:'Protector solar'},
+  {cat:'accesorios',icon:'🎒',count:'',name:'Objetos personales'},
+  {cat:'accesorios',icon:'☕',count:'1',name:'Vaso térmico'},
+  {cat:'especial',icon:'🇦🇷',count:'1',name:'Camiseta de Argentina'},
+  {cat:'especial',icon:'🎭',count:'1',name:'Disfraz (fiesta disfraces)'},
+  {cat:'especial',icon:'🔴',count:'1',name:'Prenda/outfit rojo (Rojo y Blanco)'},
+  {cat:'especial',icon:'🎓',count:'1',name:'Prenda/outfit de estudiante'},
+  {cat:'especial',icon:'⚪',count:'1',name:'Prenda/outfit blanco (White Experience)'},
+  {cat:'especial',icon:'🌈',count:'1',name:'Prenda/outfit fluo'},
+  {cat:'especial',icon:'🤪',count:'1',name:'Prenda/outfit bizarro'},
+  {cat:'especial',icon:'🕯️',count:'1',name:'Prenda para Noche de Gala / Show de Velas'},
+  {cat:'docs',icon:'📋',count:'',name:'Ficha médica impresa, firmada y sellada',req:true},
+  {cat:'docs',icon:'🪪',count:'',name:'DNI vigente o pasaporte actualizado',req:true},
+  {cat:'docs',icon:'📱',count:'',name:'Datos de contacto Travel Rock guardados'},
+  {cat:'docs',icon:'💊',count:'',name:'Medicación habitual (si corresponde)'},
+  {cat:'docs',icon:'💳',count:'',name:'Tarjeta de débito/crédito (gastos personales)'},
+];
+
+const DAYS=[
+  {title:'Llegada a Bariloche',weather:'❄️ -2°/5°',acts:[{n:'Transfer aeropuerto → hotel',t:'Al llegar',tag:'traslado'},{n:'Check-in y distribución habitaciones',t:'Tarde',tag:'hotel'},{n:'Fiesta de bienvenida',t:'Noche',tag:'evento'}]},
+  {title:'Ski / Snowboard — Cerro Catedral',weather:'🌨️ -5°/3°',acts:[{n:'Desayuno buffet',t:'08:00',tag:'comida'},{n:'Traslado a Cerro Catedral',t:'09:00',tag:'traslado'},{n:'Día completo ski/snowboard con instructores',t:'10:00–17:00',tag:'excursion'},{n:'Snow Day Cerro Catedral',t:'Tarde',tag:'excursion'},{n:'Discoteca By Pass / Grisú',t:'22:00',tag:'disco'}]},
+  {title:'Culipatín + Paintball',weather:'🌤️ -3°/7°',acts:[{n:'Culipatín en Cerro Otto / Piedras Blancas',t:'Mañana',tag:'excursion'},{n:'Paintball Adventure',t:'Tarde',tag:'excursion'},{n:'Discoteca Cerebro o Genux',t:'Noche',tag:'disco'}]},
+  {title:'Full Day Camp + Chocolates',weather:'⛅ -1°/8°',acts:[{n:'Full Day Camp — tirolesas, metegol humano, mountain bike',t:'Mañana',tag:'excursion'},{n:'Fábrica de chocolates (descuentos exclusivos)',t:'Tarde',tag:'city'},{n:'Discoteca Rocket',t:'Noche',tag:'disco'}]},
+  {title:'Circuito Patagónico + City Tour',weather:'🌤️ 0°/9°',acts:[{n:'Circuito Patagónico',t:'Mañana',tag:'excursion'},{n:'Explore BRC — City Tour + equipamiento',t:'Tarde',tag:'city'},{n:'Ice Bariloche',t:'Noche',tag:'evento'}]},
+  {title:'Cuatriciclos + Ski Ranch',weather:'❄️ -4°/5°',acts:[{n:'Cuatriciclos en Dina Huapi',t:'Mañana',tag:'excursion'},{n:'Ski Ranch con almuerzo de montaña',t:'Tarde',tag:'excursion'},{n:'Full Colour Fest — Fiesta de los Colores',t:'Noche',tag:'evento'}]},
+  {title:'Travel Rock Full Day + Noche de Gala',weather:'🌨️ -3°/6°',acts:[{n:'Travel Rock Full Day — complejo con inflables',t:'Mañana',tag:'excursion'},{n:'Noche de Gala — Show de Velas',t:'Noche',tag:'evento'}]},
+  {title:'Despedida en Valle del Chall-Huaco',weather:'⛅ -2°/7°',acts:[{n:'Despedida en el Valle del Chall-Huaco',t:'Día completo',tag:'excursion'},{n:'Repetición disco',t:'Noche',tag:'disco'}]},
+  {title:'Regreso a Rosario',weather:'🌤️ 2°/10°',acts:[{n:'Desayuno final y check-out',t:'Mañana',tag:'hotel'},{n:'Transfer hotel → aeropuerto BRC',t:'Según vuelo',tag:'traslado'},{n:'Vuelo BRC–ROS',t:'A confirmar',tag:'traslado'}]},
+];
+
+const BASE_ALERTS=[
+  {level:'urgent',title:'Ficha médica pendiente',text:'Debe entregarse antes del viaje, impresa, firmada y sellada por médico. También del acompañante.'},
+  {level:'urgent',title:'Cuota julio — $180.000 (la más alta)',text:'Última cuota del plan escalonado. Verificá que esté programada.'},
+  {level:'urgent',title:'DNI del pasajero — verificar vigencia',text:'Para vuelos nacionales el DNI debe estar vigente. La gestión puede demorar semanas.'},
+  {level:'warn',title:'Liberados: 18 pagos en marzo 2026 (120 días antes)',text:'Verificá que el contingente tenga al menos 18 pasajeros pagos para conservar el liberado.'},
+  {level:'warn',title:'Reunión pre-viaje con Travel Rock pendiente',text:'La empresa debe convocar reunión de padres para informar servicios opcionales.'},
+  {level:'info',title:'Talles kit de invierno — confirmar',text:'Contactar a Travel Rock para registrar talles de campera, pantalón y botas.'},
+  {level:'info',title:'Fecha de salida a coordinar con Dr. Paul Haggis',text:'Según el Anexo, la fecha debe coordinarse con el Dr. Paul Haggis.'},
+];
+
+const MESSAGES=[
+  {from:'Adriana Ríos',text:'¿El equipo de ski está incluido o hay que pagar aparte?',time:'10:23',mine:false},
+  {from:'Mariela Toledo',text:'Sí, está en el Bonus Service — campera, pantalón y botas WaterProof 👍',time:'10:31',mine:true},
+  {from:'Pablo González',text:'¿El seguro cubre si hay una fractura? Mi hijo es muy activo 😅',time:'10:45',mine:false},
+  {from:'Mariela Toledo',text:'Traumatología y cirugías al 100% con Assist Card. Es integral.',time:'10:47',mine:true},
+  {from:'Sandra Méndez',text:'¿La ficha médica se entrega antes o al llegar al aeropuerto?',time:'11:02',mine:false},
+  {from:'Carlos Ibáñez',text:'¿Confirmaron hotel?',time:'11:30',mine:false},
+  {from:'Mariela Toledo',text:'Sí, Ausonia prioridad 1 y Bariloche City alternativa.',time:'11:35',mine:true},
+];
+
+const tagStyle={excursion:{bg:'rgba(61,142,255,0.14)',col:'#3d8eff'},disco:{bg:'rgba(255,197,51,0.14)',col:'#ffc533'},hotel:{bg:'rgba(46,207,135,0.14)',col:'#2ecf87'},traslado:{bg:'rgba(90,116,148,0.14)',col:'#5a7494'},comida:{bg:'rgba(46,207,135,0.14)',col:'#2ecf87'},city:{bg:'rgba(61,142,255,0.14)',col:'#3d8eff'},evento:{bg:'rgba(255,94,26,0.14)',col:'#ff8040'}};
+
+let checks=JSON.parse(localStorage.getItem('eg_checks')||'{}');
+let kitChecks=JSON.parse(localStorage.getItem('eg_kit')||'{}');
+let customAlerts=JSON.parse(localStorage.getItem('eg_alerts')||'[]');
+let photos=[];let currentPhotoTab='todas';let currentKitFilter='all';
+
+function showSection(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+
+function renderKit(){
+  const items=currentKitFilter==='all'?KIT_ITEMS:KIT_ITEMS.filter(i=>i.cat===currentKitFilter);
+  const done=KIT_ITEMS.filter((_,i)=>kitChecks[i]).length;
+  const pct=Math.round(done/KIT_ITEMS.length*100);
+  document.getElementById('kit-pct').textContent=pct+'%';
+  document.getElementById('kit-bar').style.width=pct+'%';
+  document.getElementById('kit-label').textContent=`${done} de ${KIT_ITEMS.length} ítems listos`;
+  document.getElementById('kit-list').innerHTML='<div class="kit-grid">'+items.map(item=>{
+    const idx=KIT_ITEMS.indexOf(item);const isDone=kitChecks[idx];
+    return `<div class="kit-item ${isDone?'done':''} ${item.req&&!isDone?'req-alert':''}" onclick="toggleKit(${idx})">
+      <div class="kit-chk">${isDone?'✓':''}</div>
+      <div class="kit-item-text">${item.count?`<span class="kit-count">${item.count}</span>`:''}${item.icon} ${item.name}${item.req&&!isDone?'<span class="kit-req-badge">OBL</span>':''}</div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function toggleKit(idx){kitChecks[idx]=!kitChecks[idx];localStorage.setItem('eg_kit',JSON.stringify(kitChecks));renderKit();}
+function filterKit(f,btn){currentKitFilter=f;document.querySelectorAll('.kit-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderKit();}
+function resetKit(){if(confirm('¿Reiniciar checklist de equipaje?')){kitChecks={};localStorage.removeItem('eg_kit');renderKit();}}
+
+function renderClauses(filter){
+  const items=filter==='all'?CLAUSES:CLAUSES.filter(c=>c.level===filter);
+  document.getElementById('clauses-list').innerHTML=items.map((c,i)=>`
+    <div class="clause ${c.level}">
+      <div class="clause-head"><span class="clause-icon">${c.icon}</span>
+        <div style="flex:1"><div class="clause-title">${c.title} <span class="badge ${c.level==='danger'?'badge-red':c.level==='warn'?'badge-yellow':'badge-green'}">${c.badge}</span></div>
+          <div class="clause-text">${c.text}</div>
+          <div class="clause-detail" id="cd-${i}">${c.detail}</div>
+          <button class="expand-btn" onclick="toggleDetail('cd-${i}',this)">▸ Ver recomendación</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterClauses(f,btn){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderClauses(f);}
+function toggleDetail(id,btn){const el=document.getElementById(id);el.style.display=el.style.display==='block'?'none':'block';btn.textContent=el.style.display==='block'?'▾ Ocultar':'▸ Ver recomendación';}
+
+function renderDays(){
+  document.getElementById('days-list').innerHTML=DAYS.map((d,di)=>{
+    const total=d.acts.length;const done=d.acts.filter((_,ai)=>checks[`${di}-${ai}`]).length;const pct=Math.round(done/total*100);
+    const acts=d.acts.map((a,ai)=>{const key=`${di}-${ai}`;const isDone=checks[key];const ts=tagStyle[a.tag]||{bg:'rgba(255,255,255,0.05)',col:'#5a7494'};
+      return `<div class="act-row"><div class="chk ${isDone?'done':''}" onclick="toggleCheck('${key}')">${isDone?'✓':''}</div><div><div class="act-name ${isDone?'done':''}">${a.n}<span class="act-tag" style="background:${ts.bg};color:${ts.col}">${a.tag}</span></div><div class="act-time">${a.t}</div></div></div>`;
+    }).join('');
+    return `<div class="day-block"><div class="day-head" onclick="toggleDay(${di})"><div><div class="day-num">Día ${di+1}</div><div class="day-title">${d.title}</div></div>
+      <div class="day-meta"><span style="font-size:12px;color:var(--text3)">${d.weather}</span><span class="badge ${done===total&&total>0?'badge-green':done>0?'badge-yellow':'badge-orange'}">${done}/${total}</span><span style="color:var(--text3);font-size:11px">▾</span></div></div>
+      <div class="day-body" id="db-${di}">${acts}<div style="margin-top:9px"><div class="prog-label"><span>Completado</span><span>${pct}%</span></div><div class="prog-bar"><div class="prog-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div></div></div></div>`;
+  }).join('');
+}
+
+function toggleDay(di){document.getElementById('db-'+di).classList.toggle('open');}
+function toggleCheck(key){checks[key]=!checks[key];localStorage.setItem('eg_checks',JSON.stringify(checks));renderDays();}
+function resetChecks(){if(confirm('¿Reiniciar todos los checks?')){checks={};localStorage.removeItem('eg_checks');renderDays();}}
+
+function renderAlerts(){
+  const all=[...BASE_ALERTS,...customAlerts];
+  document.getElementById('alert-count').textContent=all.filter(a=>a.level==='urgent').length;
+  document.getElementById('alerts-list').innerHTML=all.map(a=>`
+    <div class="alert-item ${a.level==='urgent'?'alert-urgent':a.level==='warn'?'alert-warn':'alert-info'}">
+      <div class="alert-icon">${a.level==='urgent'?'🔴':a.level==='warn'?'⚠️':'ℹ️'}</div>
+      <div><div class="alert-title">${a.title}</div><div class="alert-text">${a.text}</div></div>
+    </div>`).join('');
+}
+
+function addAlert(){
+  const text=document.getElementById('new-alert-text').value.trim();const type=document.getElementById('new-alert-type').value;
+  if(!text)return;customAlerts.push({level:type,title:'Recordatorio',text});localStorage.setItem('eg_alerts',JSON.stringify(customAlerts));
+  document.getElementById('new-alert-text').value='';renderAlerts();
+}
+
+function renderMessages(){
+  const list=document.getElementById('msg-list');
+  list.innerHTML=MESSAGES.map(m=>`<div class="msg ${m.mine?'mine':'other'}">${!m.mine?`<div class="msg-sender">${m.from}</div>`:''}${m.text}<div class="msg-time">${m.time}</div></div>`).join('');
+  list.scrollTop=list.scrollHeight;
+}
+
+function sendMsg(){
+  const inp=document.getElementById('msg-input');const txt=inp.value.trim();if(!txt)return;
+  const now=new Date();MESSAGES.push({from:'Yo',text:txt,time:`${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`,mine:true});
+  inp.value='';renderMessages();
+}
+
+function handlePhotos(e){
+  Array.from(e.target.files).forEach(f=>{const r=new FileReader();r.onload=ev=>{photos.push({src:ev.target.result,name:f.name});renderPhotos();};r.readAsDataURL(f);});
+}
+
+function switchPhotoTab(tab,btn){currentPhotoTab=tab;document.querySelectorAll('.photo-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderPhotos();}
+
+function renderPhotos(){
+  const filtered=currentPhotoTab==='todas'?photos:photos.filter(p=>p.tab===currentPhotoTab);
+  const grid=document.getElementById('photo-grid');
+  grid.innerHTML=filtered.map(p=>`<div class="photo-item"><img src="${p.src}" alt="${p.name}"><div class="photo-caption">${p.name.substring(0,25)}</div></div>`).join('')
+    +Array(Math.max(0,3-filtered.length)).fill(`<div class="photo-empty" onclick="document.getElementById('photo-input').click()"><span style="font-size:20px">+</span><span>Agregar</span></div>`).join('');
+}
+
+function setQ(q){document.getElementById('ai-input').value=q;}
+
+async function askAI(){
+  const q=document.getElementById('ai-input').value.trim();if(!q)return;
+  const out=document.getElementById('ai-output');
+  out.innerHTML=`<span style="color:var(--text3)"><span class="dots"><span></span><span></span><span></span></span> Analizando...</span>`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`Sos asesor de contratos de turismo estudiantil argentino. Respondé a padres de forma clara y directa. Advertí lo que puede perjudicarlos, destacá lo que los protege.\n\nContrato:\n${CONTRACT}\n\nPregunta: ${q}\n\nRespondé en máximo 4 párrafos cortos.`}]})});
+    const data=await res.json();
+    out.innerHTML=(data.content?.[0]?.text||'Sin respuesta.').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+  }catch(e){out.innerHTML=`<span style="color:var(--red)">Error de conexión. Intentá de nuevo.</span>`;}
+}
+
+function initCountdown(){
+  const diff=Math.ceil((new Date('2026-07-10')-new Date())/(864e5));
+  document.getElementById('countdown-badge').textContent=diff>0?`Viaje en ${diff} días`:'¡Viaje activo!';
+}
+
+function initProgress(){
+  const elapsed=Math.max(0,(new Date().getFullYear()-2024)*12+(new Date().getMonth()-7));
+  const pct=Math.min(100,Math.round(elapsed/23*100));
+  document.getElementById('pagos-barra').style.width=pct+'%';
+  document.getElementById('pagos-label').textContent=`${Math.min(elapsed,23)} de 23 cuotas (${pct}%)`;
+  if(pct===100)document.getElementById('pagos-barra').classList.add('green');
+}
+
+renderKit();renderClauses('all');renderDays();renderAlerts();renderMessages();renderPhotos();initCountdown();initProgress();
+</script>
+</body>
+</html>
